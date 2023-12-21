@@ -83,8 +83,7 @@ export class QuoteHandler extends APIGLambdaHandler<
               errorCode: result?.errorCode,
               detail: result?.detail,
             },
-            `Quote 4XX Error [${result?.statusCode}] on ${ID_TO_NETWORK_NAME(chainId)} with errorCode '${
-              result?.errorCode
+            `Quote 4XX Error [${result?.statusCode}] on ${ID_TO_NETWORK_NAME(chainId)} with errorCode '${result?.errorCode
             }': ${result?.detail}`
           )
           break
@@ -266,7 +265,7 @@ export class QuoteHandler extends APIGLambdaHandler<
           portionBips,
           portionRecipient,
           portionAmount ??
-            computePortionAmount(CurrencyAmount.fromRawAmount(currencyOut, JSBI.BigInt(amountRaw)), portionBips)
+          computePortionAmount(CurrencyAmount.fromRawAmount(currencyOut, JSBI.BigInt(amountRaw)), portionBips)
         )
 
         swapParams = {
@@ -376,8 +375,7 @@ export class QuoteHandler extends APIGLambdaHandler<
             swapParams,
             intent,
           },
-          `Exact In Swap: Give ${amount.toExact()} ${amount.currency.symbol}, Want: ${
-            currencyOut.symbol
+          `Exact In Swap: Give ${amount.toExact()} ${amount.currency.symbol}, Want: ${currencyOut.symbol
           }. Chain: ${chainId}`
         )
 
@@ -401,8 +399,7 @@ export class QuoteHandler extends APIGLambdaHandler<
             routingConfig: routingConfig,
             swapParams,
           },
-          `Exact Out Swap: Want ${amount.toExact()} ${amount.currency.symbol} Give: ${
-            currencyIn.symbol
+          `Exact Out Swap: Want ${amount.toExact()} ${amount.currency.symbol} Give: ${currencyIn.symbol
           }. Chain: ${chainId}`
         )
 
@@ -444,6 +441,7 @@ export class QuoteHandler extends APIGLambdaHandler<
       simulationStatus,
       hitsCachedRoute,
       portionAmount: outputPortionAmount, // TODO: name it back to portionAmount
+      trade
     } = swapRoute
 
     if (simulationStatus == SimulationStatus.Failed) {
@@ -605,6 +603,9 @@ export class QuoteHandler extends APIGLambdaHandler<
       portionRecipient: portionRecipient,
       portionAmount: outputPortionAmount?.quotient.toString(),
       portionAmountDecimals: outputPortionAmount?.toExact(),
+      slippage: trade.priceImpact?.toFixed(4),
+      slippageTolerance,
+      worstPrice: trade.worstExecutionPrice(parseSlippageTolerance(slippageTolerance || '0.5')).toFixed(8),
     }
 
     this.logRouteMetrics(
@@ -700,8 +701,8 @@ export class QuoteHandler extends APIGLambdaHandler<
       const metricPair = pairsTracked?.includes(tradingPair)
         ? tradingPair
         : pairsTracked?.includes(wildcardInPair)
-        ? wildcardInPair
-        : wildcardOutPair
+          ? wildcardInPair
+          : wildcardOutPair
 
       metric.putMetric(
         `GET_QUOTE_AMOUNT_${metricPair}_${tradeType.toUpperCase()}_CHAIN_${chainId}`,

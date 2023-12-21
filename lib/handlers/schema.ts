@@ -97,4 +97,7 @@ export type QuoteResponse = {
   portionRecipient?: string
   portionAmount?: string
   portionAmountDecimals?: string
+  slippage?: string
+  slippageTolerance?: string
+  worstPrice?: string
 }

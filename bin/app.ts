@@ -79,7 +79,7 @@ export class RoutingAPIPipeline extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props)
 
-    const code = CodePipelineSource.gitHub('Uniswap/routing-api', 'main', {
+    const code = CodePipelineSource.gitHub('Jasmine-Energy/routing-api', 'main', {
       authentication: SecretValue.secretsManager('github-token-2'),
     })
 
@@ -193,7 +193,7 @@ export class RoutingAPIPipeline extends Stack {
       env: { account: '606857263320', region: 'us-east-2' },
       jsonRpcProviders: jsonRpcProviders,
       internalApiKey: internalApiKey.secretValue.toString(),
-      provisionedConcurrency: 1000,
+      provisionedConcurrency: 5,
       ethGasStationInfoUrl: ethGasStationInfoUrl.secretValue.toString(),
       chatbotSNSArn: 'arn:aws:sns:us-east-2:644039819003:SlackChatbotTopic',
       stage: STAGE.PROD,
